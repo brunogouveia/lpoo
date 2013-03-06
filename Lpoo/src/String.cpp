@@ -15,7 +15,7 @@ String::String(const char * string)
 	while (string[stringLen] != '\0')
 		stringLen++;
 
-	data = new (stringLen + 1) StringData(string);
+	data = new (stringLen) StringData(string);
 }
 
 String::String(const String& string)
@@ -142,9 +142,10 @@ String& String::operator+(const String& string) const
 {
 
 	int i;
-	StringData * data2 = new (string.length() + length()) StringData();
-	String * nString = new String(data2);
-	data2->len = length() + string.length();
+	StringData * data = new (string.length() + length()) StringData();
+	String * nString = new String(data);
+	data->len = length() + string.length();
+	data->refCount = 0;
 
 	for (i = 0; i < length(); i++)
 		(*nString)[i] = (*this)[i];
@@ -169,6 +170,7 @@ String String::operator+(const char* string) const
 	StringData * data = new (stringLen + length()) StringData();
 	String * nString = new String(data);
 	data->len = length() + stringLen;
+	data->refCount = 0;
 
 	for (i = 0; i < length(); i++)
 		(*nString)[i] = (*this)[i];

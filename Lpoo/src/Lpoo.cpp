@@ -15,16 +15,22 @@ using namespace std;
 int main()
 {
 	//StringData *d = new StringData();
-	String *a = new String("boisahzashdacaraverdeepretaeazuleamarelaecinzaevermelha");
-	a->print();
-	String * s = new String("freestepehnoisquevoaashashashhasshashhasssasassadasd");
-	String * b = new String("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
+	String *a = new String("BrunoHenriqueGouveiaYuriClaureNetoFilhoDaSilva");
+	String * s = new String("AlvaroBotturaSantosDeMeloDaFonsecaJuniolMalboroBoro");
+	String * b = new String("BrunoHenriqueGouveiaYuriClaureNetoFilhoDaSilva");
 
-	String c = "oi papai da cara azul e vermelha";
+	String *pt;
+	{
+		String p = "abelha";
+		String x = "aabelha";
+		p += "tentei te esquecer";
+		printf("%d\n", p.data->refCount);
+		//*a = *s + "zzzz";
+		p.print();
+		pt = &p;
+	}
+	printf("%d\n", pt->data->refCount);
+	printf("%d\n", a->data->refCount);
 
-	//String p = *a + *s;
-	//*a = *s + "zzzz";
-	a->print();
-	s->print();
 	return 0;
 }

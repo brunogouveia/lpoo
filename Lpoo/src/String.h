@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <new>
 #include <stdio.h>
+#include <iostream>
 
 class StringData
 {
@@ -34,7 +35,7 @@ class StringData
 		char* buffer()
 		{
 			void * v = this;
-			v += sizeof(this);
+			v += sizeof(StringData);
 			return reinterpret_cast<char*>(v);
 		}
 
@@ -47,8 +48,9 @@ class StringData
 			 */
 			StringData * obj = reinterpret_cast<StringData*>(::operator new(size + round4(maxLen + 1)));
 			obj->maxLen = round4(maxLen + 1);
-
+			printf("Objeto construido\n");
 			return obj;
+			//return ::operator new(size + round4(maxLen + 1));
 			/*
 			 Usando o operador new agora:
 			 new (len) StringData( “Args” )
@@ -64,6 +66,7 @@ class StringData
 		 */
 		void operator delete(void* obj)
 		{
+			printf("Objeto destruido\n");
 			::operator delete(obj); //nome qualificado por causa do operador de escopo (:: )
 		}
 		void operator delete(void* obj, int size) throw ()
