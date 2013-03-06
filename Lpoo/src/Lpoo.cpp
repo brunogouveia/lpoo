@@ -21,15 +21,15 @@ int main()
 
 	String *pt;
 	{
-		String p = "abelha";
-		String x = "aabelha";
-		p += "tentei te esquecer";
-		printf("%d\n", p.data->refCount);
+		String *p = new String("abelha");
+		String *x = new String("aabelha");
+		*p += "tentei te esquecer";
+		printf("%d\n", p->data->refCount);
 		//*a = *s + "zzzz";
-		p.print();
-		pt = &p;
+		p->print();
+		pt = p;
 	}
-	printf("%d\n", pt->data->refCount);
+	delete pt;
 	printf("%d\n", a->data->refCount);
 
 	return 0;
