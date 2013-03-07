@@ -3,45 +3,36 @@
 #include <stdio.h>
 #include <iostream>
 
-class StringData
-{
+class StringData {
 	public:
 		friend class String;
 		int refCount;
 		int len;
 		int maxLen;
-		~StringData()
-		{
-
+		~StringData() {
+			printf("Destruir: %s\n", buffer());
 		}
-		StringData()
-		{
+		StringData() {
 			len = 0;
 			refCount = 1;
 		}
-		StringData(const char * string)
-		{
+		StringData(const char * string) {
 			char * data = buffer();
 
 			len = 0;
-			while (string[len] != '\0' && len < (maxLen - 1))
-			{
+			while (string[len] != '\0' && len < (maxLen - 1)) {
 				data[len] = string[len];
 				len++;
 			}
 			data[len] = '\0';
 			refCount = 1;
 		}
-		char* buffer()
-		{
-			void * v = this;
-			v += sizeof(StringData);
-			return reinterpret_cast<char*>(v);
+		char* buffer() {
+			return reinterpret_cast<char*>(reinterpret_cast<char*>(this) + sizeof(StringData));
 		}
 
 	public:
-		void* operator new(size_t size, int maxLen)
-		{
+		void* operator new(size_t size, int maxLen) {
 			/*
 			 aloca espaço na memória para o objeto da classe StringData, além do espaço para  (len + 1),
 			 que contém a própria string e  o ‘ \0’
@@ -56,32 +47,27 @@ class StringData
 			 new (len) StringData( “Args” )
 			 */
 		}
-		static int round4(int len)
-		{
+		static int round4(int len) {
 			return ((((int) (len / 4)) + 1) * 4);
 		}
 
 		/*
 		 Quando se sobrecarrega o operador new, deve-se sobrecarregar o operador delete, contendo parametros similares. Isso é necessário pois, caso haja algum problema durante o new, um delete será chamado usando os mesmos parametros
 		 */
-		void operator delete(void* obj)
-		{
+		void operator delete(void* obj) {
 			printf("Objeto destruido\n");
 			::operator delete(obj); //nome qualificado por causa do operador de escopo (:: )
 		}
-		void operator delete(void* obj, int size) throw ()
-		{
+		void operator delete(void* obj, int size) throw () {
 			::operator delete(obj); //nome qualificado por causa do operador de escopo (:: )
 		}
 };
 
-class String
-{
+class String {
 	public:
 		StringData * data;
 
-		String(StringData * data)
-		{
+		String(StringData * data) {
 			this->data = data;
 		}
 	public:
