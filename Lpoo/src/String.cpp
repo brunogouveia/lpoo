@@ -8,8 +8,7 @@
 #include <ctype.h>
 #include <stdio.h>
 
-String::String(const char * string)
-{
+String::String(const char * string) {
 	int stringLen = 0;
 
 	while (string[stringLen] != '\0')
@@ -18,21 +17,18 @@ String::String(const char * string)
 	data = new (stringLen) StringData(string);
 }
 
-String::String(const String& string)
-{
+String::String(const String& string) {
 
 	data = string.data;
 	string.data->refCount++;
 }
-String::~String()
-{
+String::~String() {
 	this->data->refCount--;
 	if (this->data->refCount == 0)
 		delete data;
 }
 
-String& String::operator=(const String string)
-{
+String& String::operator=(const String string) {
 	data->refCount--;
 	if (this->data->refCount == 0)
 		delete data;
@@ -41,8 +37,7 @@ String& String::operator=(const String string)
 	return *this;
 }
 
-String& String::operator=(const char * string)
-{
+String& String::operator=(const char * string) {
 	data->refCount--;
 	if (this->data->refCount == 0)
 		delete data;
@@ -55,16 +50,13 @@ String& String::operator=(const char * string)
 	return *this;
 }
 
-int String::length() const
-{
+int String::length() const {
 	return data->len;
 }
 
-bool String::operator==(const String& string) const
-{
+bool String::operator==(const String& string) const {
 
-	if (length() == string.length())
-	{
+	if (length() == string.length()) {
 		for (int i = 0; i < length(); i++)
 			if (string[i] != (*this)[i])
 				return false;
@@ -74,8 +66,7 @@ bool String::operator==(const String& string) const
 
 }
 
-int String::compare(const String& string) const
-{
+int String::compare(const String& string) const {
 
 	int min = (length() < string.length()) ? length() : string.length();
 
@@ -94,16 +85,14 @@ int String::compare(const String& string) const
 
 }
 
-bool String::operator==(const char* string) const
-{
+bool String::operator==(const char* string) const {
 
 	int stringLen = 0;
 
 	while (string[stringLen] != '\0')
 		stringLen++;
 
-	if (length() == stringLen)
-	{
+	if (length() == stringLen) {
 		for (int i = 0; i < length(); i++)
 			if (string[i] != (*this)[i])
 				return false;
@@ -113,8 +102,7 @@ bool String::operator==(const char* string) const
 
 }
 
-int String::compare(const char* string) const
-{
+int String::compare(const char* string) const {
 
 	int stringLen = 0;
 
@@ -138,8 +126,7 @@ int String::compare(const char* string) const
 
 }
 
-String& String::operator+(const String& string) const
-{
+String& String::operator+(const String& string) const {
 
 	int i;
 	StringData * data = new (string.length() + length()) StringData();
@@ -158,8 +145,7 @@ String& String::operator+(const String& string) const
 
 }
 
-String String::operator+(const char* string) const
-{
+String String::operator+(const char* string) const {
 
 	int stringLen = 0;
 
@@ -183,39 +169,46 @@ String String::operator+(const char* string) const
 
 }
 
-String String::operator+=(const String& string)
-{
+String String::operator+=(const String& string) {
 	*this = *this + string;
 	return *this;
 }
-String& String::operator+=(const char* string)
-{
+String& String::operator+=(const char* string) {
 	*this = *this + string;
 	return *this;
 }
 
-String String::toLower()
-{
+bool String::operator <(const String& string) {
+	return compare(string) < 0;
+}
+bool String::operator <(const char * string) {
+	return compare(string) < 0;
+}
+
+bool String::operator >(const String& string) {
+	return compare(string) > 0;
+}
+bool String::operator >(const char * string) {
+	return compare(string) > 0;
+}
+
+String String::toLower() {
 	for (int i = 0; i < length(); i++)
 		(*this)[i] = tolower((*this)[i]);
 	return *this;
 }
-String String::toUpper()
-{
+String String::toUpper() {
 	for (int i = 0; i < length(); i++)
 		(*this)[i] = toupper((*this)[i]);
 	return *this;
 }
-char String::operator[](int i) const
-{
+char String::operator[](int i) const {
 	return *(data->buffer() + i);
 }
-char& String::operator[](int i)
-{
+char& String::operator[](int i) {
 	return *(data->buffer() + i);
 }
 
-void String::print() const
-{
+void String::print() const {
 	printf("%s\n", data->buffer());
 }

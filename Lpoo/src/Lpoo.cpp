@@ -13,29 +13,35 @@ using namespace std;
 #include "String.h"
 #include "Array.h"
 #include "Set.h"
+#include "TreeSet.h"
 
 int main() {
-	Set<int> *s = new Set<int>();
-	s->add(10);
-	s->add(30);
-	s->add(12);
-	s->remove(10);
-	if (s->contains(30))
-		puts("Tem");
-	SortedSet<int> *ss = new SortedSet<int>();
-	ss->add(*s);
+	TreeSet<int> *t = new TreeSet<int>();
+	t->add(10);
+	t->add(12);
+	t->add(1);
+	t->add(7);
+	t->add(140);
+	t->add(0);
+	t->add(0);
+	t->add(2);
+	t->add(22);
+	t->add(17);
+	t->add(122);
+	t->add(54);
+	t->add(-22);
+	t->add(-2);
+	t->add(3);
+	t->remove(12);
 
-	Array<int> *a = new Array<int>();
-	a->add(2);
-	a->add(10);
-	Array<int> *ar = new Array<int>();
-	ar->add(*a);
+	if (t->isEmpty())
+		puts("Vazio");
 
-	Iterator<int> *i = ss->iterator();
+	Iterator<int> *i = t->iterator();
 	while (i->hasNext()) {
-		printf("%d ", i->next());
+		printf("%d ",i->next());
 	}
-	printf("\n%d\n", s->size());
+	printf("\n%d\n", t->size());
 
 	return 0;
 }

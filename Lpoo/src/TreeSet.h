@@ -13,19 +13,86 @@
 
 template<typename E>
 class TreeSet;
+template<typename E>
+class TreeSetNode;
+
+template<typename E>
+class TreeSetIterator: public Iterator<E> {
+	private:
+		friend class TreeSet<E> ;
+		TreeSetIterator() {
+			node = NULL;
+			lastMove = Printed;
+		}
+		TreeSetIterator(TreeSetNode<E> * root)
+				: node(root) {
+			while (node != NULL) {
+				if (node->left == NULL)
+					break;
+				node = node->left;
+			}
+			if (node == root) {
+				lastMove = UpFromLeft;
+			} else {
+				lastMove = Down;
+			}
+		}
+		virtual ~TreeSetIterator() {
+		}
+		virtual bool hasNext() const {
+			return node != NULL;
+		}
+		virtual const E& next();
+	private:
+		enum {
+			Printed, UpFromLeft, UpFromRight, Down
+		} lastMove;
+		TreeSetNode<E> * node;
+		E nextValue;
+};
+
+template<typename E>
+const E& TreeSetIterator<E>::next() {
+	while (lastMove == Down && node->left != NULL) {
+		node = node->left;
+	}
+	nextValue = node->value;
+
+	if (lastMove == UpFromLeft || lastMove == Down) {
+		if (node->right != NULL) {
+			node = node->right;
+			lastMove = Down;
+		} else {
+			if (node->parent != NULL) {
+				lastMove = (node->parent->value < node->value) ? UpFromRight : UpFromLeft;
+			}
+			node = node->parent;
+		}
+	}
+	while (lastMove == UpFromRight && node != NULL) {
+		if (node->parent != NULL) {
+			lastMove = (node->parent->value < node->value) ? UpFromRight : UpFromLeft;
+		}
+		node = node->parent;
+	}
+
+	return nextValue;
+}
 
 template<typename E>
 class TreeSetNode {
 	private:
 		friend class TreeSet<E> ;
+		friend class TreeSetIterator<E> ;
 		TreeSetNode()
-				: left(NULL), right(NULL) {
+				: parent(NULL), left(NULL), right(NULL) {
 		}
-		TreeSetNode(const E value)
-				: value(value), left(NULL), right(NULL) {
+		TreeSetNode(const E value, TreeSetNode<E> * parent)
+				: value(value), parent(parent), left(NULL), right(NULL) {
 		}
-		TreeSetNode(const E value, const TreeSetNode * left, const TreeSetNode * right) {
+		TreeSetNode(const E value, const TreeSetNode<E> * parent, const TreeSetNode<E> * left, const TreeSetNode<E> * right) {
 			this->value = value;
+			this->parent = parent;
 			this->left = left;
 			this->right = right;
 		}
@@ -33,33 +100,34 @@ class TreeSetNode {
 		}
 
 		E value;
-		TreeSetNode * left;
-		TreeSetNode * right;
+		TreeSetNode<E> * parent;
+		TreeSetNode<E> * left;
+		TreeSetNode<E> * right;
 };
 
 template<typename E>
 class TreeSet: public SortedSet<E> {
 	public:
-		TreeSet(): numNodes(0), root(NULL) {
+		TreeSet()
+				: root(NULL) {
+			this->numNodes = 0;
 		}
-		~TreeSet() {
-			clear();
+		virtual ~TreeSet() {
+			this->clear();
 		}
-		/*void add(const Collection<E> & collection){
-			Collection<E>::add(collection);
-		}*/
-		void add(const E & value);
-		bool remove(const E& value);
-		void clear();
-		bool isEmpty() const;
-		int size() const;
-		bool contains(const E& value) const;
-		Iterator<E>* iterator() const;
+		virtual void add(const E & value);
+		virtual bool remove(const E& value);
+		virtual bool isEmpty();
+		virtual Iterator<E>* iterator() const;
+
+		/*void print();
+		 void print(TreeSetNode<E> * node, int tab, char a = 'N');*/
 
 	private:
-		bool contains(const E& value, TreeSetNode<E> *& parent) const;
+		TreeSetNode<E> * getLess(TreeSetNode<E> * point) const;
+		virtual bool contains(const E& value, TreeSetNode<E> *& parent) const;
 	private:
-		int numNodes;
+		using Set<E>::numNodes;
 		TreeSetNode<E> * root;
 };
 
@@ -68,13 +136,13 @@ void TreeSet<E>::add(const E& value) {
 	TreeSetNode<E> * parent;
 	if (!contains(value, parent)) {
 		if (parent == NULL) {
-			root = new TreeSetNode<E>(value);
-		} else if (parent->value < value) {
-			parent->left = new TreeSetNode<E>(value);
+			root = new TreeSetNode<E>(value, NULL);
+		} else if (parent->value > value) {
+			parent->left = new TreeSetNode<E>(value, parent);
 		} else {
-			parent->right = new TreeSetNode<E>(value);
+			parent->right = new TreeSetNode<E>(value, parent);
 		}
-		numNodes++;
+		this->numNodes++;
 	}
 }
 
@@ -85,70 +153,103 @@ bool TreeSet<E>::remove(const E& value) {
 	}
 	TreeSetNode<E> * parent;
 	if (contains(value, parent)) {
-		TreeSetNode<E> * node;
+		TreeSetNode<E> * temp;
 		if (parent == NULL) {
-			if (root->left == NULL && root->right == NULL) {
-				delete root;
-				root = NULL;
-			} else if (root->left == NULL) {
-				node = root;
-				root = root->right;
-				delete node;
-			} else {
-				node = root;
-				root->left->right = root->right;
+			if (root->left != NULL && root->right != NULL) {
+				TreeSetNode<E> * less = getLess(root->right);
+				E value = less->value;
+				remove(value);
+				root->value = value;
+			} else if (root->left != NULL) {
+				temp = root;
 				root = root->left;
-				delete node;
+				root->parent = NULL;
+				delete temp;
+			} else {
+				temp = root;
+				root = root->right;
+				root->parent = NULL;
+				delete temp;
+			}
+		} else {
+			TreeSetNode<E> *& node = (parent->value > value) ? parent->left : parent->right;
+			if (node->left != NULL && node->right != NULL) {
+				TreeSetNode<E> * less = getLess(node->right);
+				E value = less->value;
+				remove(value);
+				node->value = value;
+			} else if (node->left != NULL) {
+				temp = node;
+				node = node->left;
+				node->parent = parent;
+				delete temp;
+			} else {
+				temp = node;
+				node = node->right;
+				node->parent = parent;
+				delete temp;
 			}
 		}
-		numNodes--;
-	} else {
-		return false;
+		this->numNodes--;
 	}
+	return false;
 }
 
 template<typename E>
-void TreeSet<E>::clear() {
-	while (!isEmpty()) {
-		remove(root->value);
-	}
+bool TreeSet<E>::isEmpty() {
+	return root == NULL;
 }
 
-//perguntando se a colecao eh vaziazona ou gordona
-template<typename E>
-bool TreeSet<E>::isEmpty() const {
-	return numNodes == 0;
-}
-template<typename E>
-int TreeSet<E>::size() const {
-	return numNodes;
-}
-
-template<typename E>
-bool TreeSet<E>::contains(const E& value) const {
-	TreeSetNode<E> * useless;
-	return contains(value, useless);
-}
-//a colecao disponibiliza um ponteiro para o iterador,
-//que eh o objeto responsavel pela manipulacao da colecao
 template<typename E>
 Iterator<E>* TreeSet<E>::iterator() const {
-
+	return new TreeSetIterator<E>(root);
 }
 
 template<typename E>
 bool TreeSet<E>::contains(const E& value, TreeSetNode<E> *& parent) const {
 	parent = NULL;
 	TreeSetNode<E> * node = root;
-	while (node != root) {
+	while (node != NULL) {
 		if (node->value == value) {
 			return true;
 		} else {
 			parent = node;
-			node = (node->value > value) ? node->right : node->left;
+			node = (node->value < value) ? node->right : node->left;
 		}
 	}
 	return false;
+}
+
+/*template<typename E>
+ void TreeSet<E>::print() {
+ puts("Arvore");
+ print(root, 0);
+ printf("\n");
+ }
+ template<typename E>
+ void TreeSet<E>::print(TreeSetNode<E> * node, int tab, char a) {
+ if (node == NULL)
+ return;
+ for (int i = 0; i < tab; i++) {
+ printf("\t");
+ }
+ printf("[%c]%d\n", a, node->value);
+ if (node->left != NULL) {
+ print(node->left, tab + 1, 'L');
+ }
+ if (node->right != NULL) {
+ print(node->right, tab + 1, 'R');
+ }
+ }*/
+
+template<typename E>
+TreeSetNode<E> * TreeSet<E>::getLess(TreeSetNode<E>* point) const {
+	TreeSetNode<E> * node = point;
+	while (node != NULL) {
+		if (node->left == NULL)
+			return node;
+		node = node->left;
+	}
 }
 
 #endif /* TREESET_H_ */

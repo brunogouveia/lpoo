@@ -144,8 +144,8 @@ int Set<E>::size() const {
 
 template<typename E>
 bool Set<E>::contains(const E& value) const {
-	SetNode<E> * node;
-	return contains(value, node);
+	SetNode<E> * useless;
+	return contains(value, useless);
 }
 
 template<typename E>
@@ -205,7 +205,7 @@ template<typename E>
 bool SortedSet<E>::contains(const E& value, SetNode<E> * & prev) const {
 	prev = NULL;
 	SetNode<E> * node = Set<E>::head;
-	while (node != NULL && node->value <= value) {
+	while (node != NULL && node->value < value) {
 		if (node->value == value)
 			return true;
 		prev = node;

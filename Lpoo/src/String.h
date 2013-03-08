@@ -10,7 +10,6 @@ class StringData {
 		int len;
 		int maxLen;
 		~StringData() {
-			printf("Destruir: %s\n", buffer());
 		}
 		StringData() {
 			len = 0;
@@ -39,7 +38,6 @@ class StringData {
 			 */
 			StringData * obj = reinterpret_cast<StringData*>(::operator new(size + round4(maxLen + 1)));
 			obj->maxLen = round4(maxLen + 1);
-			printf("Objeto construido\n");
 			return obj;
 			//return ::operator new(size + round4(maxLen + 1));
 			/*
@@ -55,7 +53,6 @@ class StringData {
 		 Quando se sobrecarrega o operador new, deve-se sobrecarregar o operador delete, contendo parametros similares. Isso é necessário pois, caso haja algum problema durante o new, um delete será chamado usando os mesmos parametros
 		 */
 		void operator delete(void* obj) {
-			printf("Objeto destruido\n");
 			::operator delete(obj); //nome qualificado por causa do operador de escopo (:: )
 		}
 		void operator delete(void* obj, int size) throw () {
@@ -71,6 +68,10 @@ class String {
 			this->data = data;
 		}
 	public:
+		String() {
+			String("");
+		}
+		;
 		String(const char*);
 		String(const String&);
 		~String();
@@ -85,6 +86,10 @@ class String {
 		String operator +(const char*) const;
 		String operator +=(const String&);
 		String& operator +=(const char*);
+		bool operator <(const String&);
+		bool operator <(const char*);
+		bool operator >(const String&);
+		bool operator >(const char*);
 		String toLower();
 		String toUpper();
 		char operator [ ](int) const;
