@@ -11,33 +11,13 @@
 #include "Collection.h"
 
 template<typename E, int initialSize = 10>
-class Array;
+class ArrayIterator;
 
-template<typename E, int initialSize>
-class ArrayIterator: public Iterator<E> {
-	private:
-		friend class Array<E, initialSize> ;
-		ArrayIterator(E * array, int size) {
-			this->array = array;
-			this->size = size;
-			i = 0;
-		}
-		~ArrayIterator() {
-		}
-
-		bool hasNext() const {
-			return (i < size);
-		}
-		const E& next() {
-			return array[i++];
-		}
-
-	private:
-		E * array;
-		int size;
-		int i;
-};
-
+/********************************************************************************
+ ************************                             ***************************
+ ***************                Array Template                *******************
+ ************************                             ***************************
+ ********************************************************************************/
 template<typename E, int initialSize>
 class Array: public Collection<E> {
 	public:
@@ -124,5 +104,35 @@ template<typename E, int initialSize>
 Iterator<E>* Array<E, initialSize>::iterator() const {
 	return new ArrayIterator<E, initialSize>(array, usedSize);
 }
+
+/********************************************************************************
+ ************************                             ***************************
+ ***************            ArrayIterator Template            *******************
+ ************************                             ***************************
+ ********************************************************************************/
+template<typename E, int initialSize>
+class ArrayIterator: public Iterator<E> {
+	private:
+		friend class Array<E, initialSize> ;
+		ArrayIterator(E * array, int size) {
+			this->array = array;
+			this->size = size;
+			i = 0;
+		}
+		~ArrayIterator() {
+		}
+
+		bool hasNext() const {
+			return (i < size);
+		}
+		const E& next() {
+			return array[i++];
+		}
+
+	private:
+		E * array;
+		int size;
+		int i;
+};
 
 #endif /* ARRAY_H_ */

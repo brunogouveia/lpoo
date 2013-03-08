@@ -1,7 +1,7 @@
-#ifndef __SET_H
-#define __SET_H
+#ifndef SET_H_
+#define SET_H_
 
-#ifndef COLLECTION_H
+#ifndef COLLECTION_H_
 #include "Collection.h"
 #endif
 
@@ -36,27 +36,12 @@ class SetNode {
 		SetNode * next;
 };
 
-template<typename E>
-class SetIterator: public Iterator<E> {
-	private:
-		friend class Set<E> ;
-		SetIterator(SetNode<E> * head)
-				: node(head) {
-		}
-		~SetIterator() {
-		}
-		bool hasNext() const {
-			return node != NULL;
-		}
-		const E & next() {
-			E& value = node->value;
-			node = node->next;
-			return value;
-		}
 
-	private:
-		SetNode<E> * node;
-};
+/********************************************************************************
+ ************************                             ***************************
+ ***************                 Set Template                 *******************
+ ************************                             ***************************
+ ********************************************************************************/
 
 template<typename E>
 class Set: public Collection<E> {
@@ -166,52 +151,32 @@ Iterator<E>* Set<E>::iterator() const {
 	return new SetIterator<E>(head);
 }
 
+/********************************************************************************
+ ************************                             ***************************
+ ***************             SetIterator Template             *******************
+ ************************                             ***************************
+ ********************************************************************************/
+
 template<typename E>
-class SortedSet: public Set<E> {
+class SetIterator: public Iterator<E> {
 	private:
-		virtual bool contains(const E& value, SetNode<E> *& prev) const;
+		friend class Set<E> ;
+		SetIterator(SetNode<E> * head)
+				: node(head) {
+		}
+		~SetIterator() {
+		}
+		bool hasNext() const {
+			return node != NULL;
+		}
+		const E & next() {
+			E& value = node->value;
+			node = node->next;
+			return value;
+		}
 
-	public:
-		using Collection<E>::add;
-		SortedSet()
-				: Set<E>() {
-		}
-		//metodo virtual puro
-		virtual void add(const E & value);
-		virtual ~SortedSet() {
-			this->clear();
-		}
+	private:
+		SetNode<E> * node;
 };
-
-template<typename E>
-void SortedSet<E>::add(const E & value) {
-	SetNode<E> * previ;
-	if (!contains(value, previ)) {
-		if (this->head == NULL) {
-			this->head = new SetNode<E>(value);
-			this->numNodes = 1;
-		} else {
-			if (previ == NULL) {
-				this->head = new SetNode<E>(value, Set<E>::head);
-			} else {
-				previ->next = new SetNode<E>(value, previ->next);
-			}
-			this->numNodes++;
-		}
-	}
-}
-
-template<typename E>
-bool SortedSet<E>::contains(const E& value, SetNode<E> * & prev) const {
-	prev = NULL;
-	SetNode<E> * node = Set<E>::head;
-	while (node != NULL && node->value < value) {
-		if (node->value == value)
-			return true;
-		prev = node;
-		node = node->next;
-	}
-	return false;
-}
 
 #endif
