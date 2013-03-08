@@ -84,7 +84,7 @@ class String {
 		String& operator +(const String&) const;
 		String operator +(const char*) const;
 		String operator +=(const String&);
-		String operator +=(const char*);
+		String& operator +=(const char*);
 		String toLower();
 		String toUpper();
 		char operator [ ](int) const;

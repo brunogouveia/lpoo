@@ -188,7 +188,7 @@ String String::operator+=(const String& string)
 	*this = *this + string;
 	return *this;
 }
-String String::operator+=(const char* string)
+String& String::operator+=(const char* string)
 {
 	*this = *this + string;
 	return *this;

@@ -12,27 +12,30 @@ using namespace std;
 
 #include "String.h"
 #include "Array.h"
+#include "Set.h"
 
 int main() {
-	Array<int, 3> * ar = new Array<int, 3>();
+	Set<int> *s = new Set<int>();
+	s->add(10);
+	s->add(30);
+	s->add(12);
+	s->remove(10);
+	if (s->contains(30))
+		puts("Tem");
+	SortedSet<int> *ss = new SortedSet<int>();
+	ss->add(*s);
 
-	ar->add(122);
-	ar->add(22);
-	ar->add(221);
-	ar->add(221);
-	ar->add(1);
-	ar->add(10);
-	ar->remove(122);
-	Array<int, 3> * ar2 = new Array<int, 3>();
-	ar2->Collection<int>::add(*ar);
-	ar2->remove(1);
-	ar2->clear();
-	for (int i = 0; i < ar->usedSize; i++)
-		printf("%d ", ar->array[i]);
+	Array<int> *a = new Array<int>();
+	a->add(2);
+	a->add(10);
+	Array<int> *ar = new Array<int>();
+	ar->add(*a);
 
-	for (int i = 0; i < ar2->usedSize; i++)
-		printf("%d ", ar2->array[i]);
-	printf("\n%d %d\n", ar->maxSize, ar2->maxSize);
+	Iterator<int> *i = ss->iterator();
+	while (i->hasNext()) {
+		printf("%d ", i->next());
+	}
+	printf("\n%d\n", s->size());
 
 	return 0;
 }

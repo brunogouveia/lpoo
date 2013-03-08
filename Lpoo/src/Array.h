@@ -41,6 +41,7 @@ class ArrayIterator: public Iterator<E> {
 template<typename E, int initialSize>
 class Array: public Collection<E> {
 	public:
+		using Collection<E>::add;
 		Array() {
 			array = new E[initialSize];
 			usedSize = 0;
@@ -50,20 +51,15 @@ class Array: public Collection<E> {
 			delete array;
 		}
 
-		//metodo virtual puro
 		void add(const E & value);
-		//metodo virtual
 		bool remove(const E& value);
 		void clear();
-		//perguntando se a colecao eh vaziazona ou gordona
 		bool isEmpty() const;
 		int size() const;
 		bool contains(const E& value) const;
-		//a colecao disponibiliza um ponteiro para o iterador,
-		//que eh o objeto responsavel pela manipulacao da colecao
 		Iterator<E>* iterator() const;
 
-	public:
+	private:
 		E * array;
 		int usedSize;
 		int maxSize;
