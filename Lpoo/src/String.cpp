@@ -23,24 +23,78 @@ String::String(const String& string) {
 	string.data->refCount++;
 }
 String::~String() {
-	this->data->refCount--;
-	if (this->data->refCount == 0)
-		delete data;
+	if (data == NULL) {
+		this->data->refCount--;
+		if (this->data->refCount == 0)
+			delete data;
+	}
+}
+
+int String::length() const {
+	return (data == NULL) ? 0 : data->len;
+}
+
+int String::compare(const String& string) const {
+
+	int minLength = (length() < string.length()) ? length() : string.length();
+
+	for (int i = 0; i < minLength; i++)
+		if ((*this)[i] < string[i])
+			return -1;
+		else if ((*this)[i] > string[i])
+			return 1;
+
+	if (length() < string.length())
+		return -1;
+	else if (length() > string.length())
+		return 1;
+	else
+		return 0;
+
+}
+
+int String::compare(const char * string) const {
+
+	int stringLength = 0;
+
+	while (string[stringLength] != '\0')
+		stringLength++;
+
+	int minLength = (length() < stringLength) ? length() : stringLength;
+
+	for (int i = 0; i < minLength; i++)
+		if ((*this)[i] < string[i])
+			return -1;
+		else if ((*this)[i] > string[i])
+			return 1;
+
+	if (length() < stringLength)
+		return -1;
+	else if (length() > stringLength)
+		return 1;
+	else
+		return 0;
+
 }
 
 String& String::operator=(const String string) {
-	data->refCount--;
-	if (this->data->refCount == 0)
-		delete data;
+	if (data != NULL) {
+		data->refCount--;
+		if (this->data->refCount == 0)
+			delete data;
+	}
 	data = string.data;
 	string.data->refCount++;
 	return *this;
 }
 
 String& String::operator=(const char * string) {
-	data->refCount--;
-	if (this->data->refCount == 0)
-		delete data;
+	if (data != NULL) {
+		data->refCount--;
+		if (this->data->refCount == 0) {
+			delete data;
+		}
+	}
 
 	int stringLen = 0;
 	while (string[stringLen] != '\0')
@@ -48,10 +102,6 @@ String& String::operator=(const char * string) {
 
 	data = new (stringLen) StringData(string);
 	return *this;
-}
-
-int String::length() const {
-	return data->len;
 }
 
 bool String::operator==(const String& string) const {
@@ -63,25 +113,6 @@ bool String::operator==(const String& string) const {
 		return true;
 	}
 	return false;
-
-}
-
-int String::compare(const String& string) const {
-
-	int min = (length() < string.length()) ? length() : string.length();
-
-	for (int i = 0; i < min; i++)
-		if (string[i] < (*this)[i])
-			return -1;
-		else if (string[i] > (*this)[i])
-			return 1;
-
-	if (length() < string.length())
-		return -1;
-	else if (length() > string.length())
-		return 1;
-	else
-		return 0;
 
 }
 
@@ -99,30 +130,6 @@ bool String::operator==(const char* string) const {
 		return true;
 	}
 	return false;
-
-}
-
-int String::compare(const char* string) const {
-
-	int stringLen = 0;
-
-	while (string[stringLen] != '\0')
-		stringLen++;
-
-	int min = (length() < stringLen) ? length() : stringLen;
-
-	for (int i = 0; i < min; i++)
-		if (string[i] < (*this)[i])
-			return -1;
-		else if (string[i] > (*this)[i])
-			return 1;
-
-	if (length() < stringLen)
-		return -1;
-	else if (length() > stringLen)
-		return 1;
-	else
-		return 0;
 
 }
 
@@ -145,7 +152,7 @@ String& String::operator+(const String& string) const {
 
 }
 
-String String::operator+(const char* string) const {
+String& String::operator+(const char* string) const {
 
 	int stringLen = 0;
 
@@ -169,7 +176,7 @@ String String::operator+(const char* string) const {
 
 }
 
-String String::operator+=(const String& string) {
+String& String::operator+=(const String& string) {
 	*this = *this + string;
 	return *this;
 }
@@ -192,12 +199,12 @@ bool String::operator >(const char * string) {
 	return compare(string) > 0;
 }
 
-String String::toLower() {
+String& String::toLower() {
 	for (int i = 0; i < length(); i++)
 		(*this)[i] = tolower((*this)[i]);
 	return *this;
 }
-String String::toUpper() {
+String& String::toUpper() {
 	for (int i = 0; i < length(); i++)
 		(*this)[i] = toupper((*this)[i]);
 	return *this;
@@ -210,5 +217,10 @@ char& String::operator[](int i) {
 }
 
 void String::print() const {
-	printf("%s\n", data->buffer());
+	if (data != NULL)
+		printf("%s\n", data->buffer());
+}
+
+char * const String::toChar() const {
+	return (data != NULL) ? data->buffer() : NULL;
 }

@@ -18,7 +18,7 @@ class ArrayIterator;
  ***************                Array Template                *******************
  ************************                             ***************************
  ********************************************************************************/
-template<typename E, int initialSize>
+template<typename E, int initialSize = 10>
 class Array: public Collection<E> {
 	public:
 		using Collection<E>::add;
@@ -74,6 +74,7 @@ bool Array<E, initialSize>::remove(const E& value) {
 		array[i] = array[i + 1];
 		i++;
 	}
+	return true;
 }
 
 template<typename E, int initialSize>

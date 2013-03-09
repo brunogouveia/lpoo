@@ -16,32 +16,123 @@ using namespace std;
 #include "TreeSet.h"
 
 int main() {
-	TreeSet<int> *t = new TreeSet<int>();
-	t->add(10);
-	t->add(12);
-	t->add(1);
-	t->add(7);
-	t->add(140);
-	t->add(0);
-	t->add(0);
-	t->add(2);
-	t->add(22);
-	t->add(17);
-	t->add(122);
-	t->add(54);
-	t->add(-22);
-	t->add(-2);
-	t->add(3);
-	t->remove(12);
+	/* Testando o array de int */
+	Array<int> * arrayInt = new Array<int>();
 
-	if (t->isEmpty())
-		puts("Vazio");
-
-	Iterator<int> *i = t->iterator();
-	while (i->hasNext()) {
-		printf("%d ",i->next());
+	printf("Array<int> * arrayInt\n");
+	printf("Teste com adição:\n");
+	srand(time(NULL));
+	for (int i = 0; i < 15; i++) {
+		int r = rand() % 100;
+		if (arrayInt->contains(r)) {
+			printf("arrayInt ja contem o inteiro %2d.\n", r);
+		} else {
+			printf("O inteiro %2d foi adicionado em arrayInt.\n", r);
+			arrayInt->add(r);
+		}
 	}
-	printf("\n%d\n", t->size());
+	printf("Teste com iterator:\n");
+	Iterator<int> * iteratorArray = arrayInt->iterator();
+	while (iteratorArray->hasNext())
+		printf("%d ", iteratorArray->next());
+	printf("\n");
+
+	printf("\Teste com remoção:\n");
+	srand(time(NULL));
+	for (int i = 0; i < 15; i++) {
+		int r = rand() % 100;
+		if (!arrayInt->contains(r)) {
+			printf("arrayInt não contem o inteiro %2d\n", r);
+		} else if (arrayInt->remove(r)) {
+			printf("o inteinro %2d foi removido de arrayInt\n", r);
+		} else {
+			/*Se o programa estiver certo, esse printf não será executado.*/
+			printf("Erro ao remover %2d.\n", r);
+		}
+	}
+
+	/*Testando o TreeSet de float*/
+	TreeSet<float> *tFloat = new TreeSet<float>();
+
+	printf("\nTreeSet<float> * tFloat\n");
+	printf("Teste com adição:\n");
+	srand(time(NULL));
+	for (int i = 0; i < 15; i++) {
+		float r = (float) (rand() % 10000);
+		r /= 100;
+		if (tFloat->contains(r)) {
+			printf("tFloat ja contem o float %5.2f.\n", r);
+		} else {
+			printf("O float %5.2f foi adicionado em tFloat.\n", r);
+			tFloat->add(r);
+		}
+	}
+
+	printf("Teste com iterator:\n");
+	Iterator<float> * iteratorTreeFloat = tFloat->iterator();
+	while (iteratorTreeFloat->hasNext())
+		printf("%.2f ", iteratorTreeFloat->next());
+	printf("\n");
+
+	printf("Teste com remoção:\n");
+	srand(time(NULL));
+	for (int i = 0; i < 15; i++) {
+		float r = (float) (rand() % 10000);
+		r /= 100;
+		if (!tFloat->contains(r)) {
+			printf("tFloat não contem o float %5.2f\n", r);
+		} else if (tFloat->remove(r)) {
+			printf("o float %5.2f foi removido de tFloat\n", r);
+		} else {
+			/*Se o programa estiver certo, esse printf não será executado.*/
+			printf("Erro ao remover %5.2f.\n", r);
+		}
+	}
+
+	/*Testando o TreeSet de float*/
+	TreeSet<String> *tString = new TreeSet<String>();
+	String * string = new String[10];
+	string[0] = "Asiáticos";
+	string[1] = "Bruno";
+	string[2] = "Maleta";
+	string[3] = "Cara de boi";
+	string[4] = "Zebra";
+	string[5] = "Tijolo";
+	string[6] = "Casa verde";
+	string[7] = "Lpoo";
+	string[8] = "String";
+	string[9] = "Baralho";
+
+	printf("\nTreeSet<float> * tFloat\n");
+	printf("Teste com adição:\n");
+	srand(time(NULL));
+	for (int i = 0; i < 10; i++) {
+		if (tString->contains(string[i])) {
+			printf("tString ja contem a string %s.\n", string[i].toChar());
+		} else {
+			printf("a string %s foi adicionado em tString.\n", string[i].toChar());
+			tString->add(string[i]);
+		}
+	}
+
+	printf("Teste com iterator:\n");
+	Iterator<String> * iteratorTreeString = tString->iterator();
+	while (iteratorTreeString->hasNext())
+		printf("\"%s\" ", iteratorTreeString->next().toChar());
+	printf("\n");
+
+	printf("Teste com remoção:\n");
+	srand(time(NULL));
+	for (int i = 0; i < 10; i++) {
+		if (!tString->contains(string[i])) {
+			printf("tString não contem a string %s\n", string[i].toChar());
+		} else if (tString->remove(string[i])) {
+			printf("a string %s foi removido de tString\n", string[i].toChar());
+		} else {
+			/*Se o programa estiver certo, esse printf não será executado.*/
+			printf("Erro ao remover %s.\n", string[i].toChar());
+		}
+	}
 
 	return 0;
 }

@@ -69,30 +69,30 @@ class String {
 		}
 	public:
 		String() {
-			String("");
+			data = NULL;
 		}
-		;
-		String(const char*);
 		String(const String&);
+		String(const char *);
 		~String();
+		int length() const;
+		int compare(const String&) const;
+		int compare(const char*) const;
 		String& operator =(const String);
 		String& operator =(const char *);
-		int length() const;
 		bool operator ==(const String&) const;
-		int compare(const String&) const;
 		bool operator ==(const char*) const;
-		int compare(const char*) const;
 		String& operator +(const String&) const;
-		String operator +(const char*) const;
-		String operator +=(const String&);
+		String& operator +(const char*) const;
+		String& operator +=(const String&);
 		String& operator +=(const char*);
 		bool operator <(const String&);
 		bool operator <(const char*);
 		bool operator >(const String&);
 		bool operator >(const char*);
-		String toLower();
-		String toUpper();
+		String& toLower();
+		String& toUpper();
 		char operator [ ](int) const;
 		char& operator [ ](int);
 		void print() const;
+		char * const toChar() const;
 };
