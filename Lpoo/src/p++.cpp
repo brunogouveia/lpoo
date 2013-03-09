@@ -40,7 +40,7 @@ int main() {
 	printf("\Teste com remoção:\n");
 	srand(time(NULL));
 	for (int i = 0; i < 15; i++) {
-		int r = rand() % 100;
+		int r = rand() % 50;
 		if (!arrayInt->contains(r)) {
 			printf("arrayInt não contem o inteiro %2d\n", r);
 		} else if (arrayInt->remove(r)) {
@@ -50,6 +50,7 @@ int main() {
 			printf("Erro ao remover %2d.\n", r);
 		}
 	}
+	delete arrayInt;
 
 	/*Testando o TreeSet de float*/
 	TreeSet<float> *tFloat = new TreeSet<float>();
@@ -77,7 +78,7 @@ int main() {
 	printf("Teste com remoção:\n");
 	srand(time(NULL));
 	for (int i = 0; i < 15; i++) {
-		float r = (float) (rand() % 10000);
+		float r = (float) (rand() % 5000);
 		r /= 100;
 		if (!tFloat->contains(r)) {
 			printf("tFloat não contem o float %5.2f\n", r);
@@ -88,6 +89,7 @@ int main() {
 			printf("Erro ao remover %5.2f.\n", r);
 		}
 	}
+	delete tFloat;
 
 	/*Testando o TreeSet de float*/
 	TreeSet<String> *tString = new TreeSet<String>();
@@ -108,9 +110,9 @@ int main() {
 	srand(time(NULL));
 	for (int i = 0; i < 10; i++) {
 		if (tString->contains(string[i])) {
-			printf("tString ja contem a string %s.\n", string[i].toChar());
+			printf("tString ja contem a string \"%s\".\n", string[i].toChar());
 		} else {
-			printf("a string %s foi adicionado em tString.\n", string[i].toChar());
+			printf("a string \"%s\" foi adicionado em tString.\n", string[i].toChar());
 			tString->add(string[i]);
 		}
 	}
@@ -125,14 +127,26 @@ int main() {
 	srand(time(NULL));
 	for (int i = 0; i < 10; i++) {
 		if (!tString->contains(string[i])) {
-			printf("tString não contem a string %s\n", string[i].toChar());
+			printf("tString não contem a string \"%s\"\n", string[i].toChar());
 		} else if (tString->remove(string[i])) {
-			printf("a string %s foi removido de tString\n", string[i].toChar());
+			printf("a string \"%s\" foi removido de tString\n", string[i].toChar());
 		} else {
 			/*Se o programa estiver certo, esse printf não será executado.*/
-			printf("Erro ao remover %s.\n", string[i].toChar());
+			printf("Erro ao remover \"%s\".\n", string[i].toChar());
 		}
 	}
+
+	String * soma = new String();
+	*soma = string[0] + string[1];
+	printf("\"%s\" = \"%s\" + \"%s\"\n", soma->toChar(), string[0].toChar(), string[1].toChar());
+	*soma += string[2];
+	printf("\"%s\" = \"%s\" + \"%s\"\n", soma->toChar(), soma->toChar(), string[2].toChar());
+	if (*soma == ((string[0] + string[1]) += string[2]))
+		printf("\"%s\" = ((\"%s\" + \"%s\") += \"%s\")\n", soma->toChar(), string[0].toChar(), string[1].toChar(), string[2].toChar());
+
+	delete soma;
+	delete tString;
+	delete[] string;
 
 	return 0;
 }
