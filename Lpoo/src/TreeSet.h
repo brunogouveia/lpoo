@@ -28,10 +28,10 @@ class TreeSetNode {
 		TreeSetNode()
 				: parent(NULL), left(NULL), right(NULL) {
 		}
-		TreeSetNode(const E value, TreeSetNode<E> * parent)
+		TreeSetNode(const E& value, TreeSetNode<E> * parent)
 				: value(value), parent(parent), left(NULL), right(NULL) {
 		}
-		TreeSetNode(const E value, const TreeSetNode<E> * parent, const TreeSetNode<E> * left, const TreeSetNode<E> * right) {
+		TreeSetNode(const E& value, const TreeSetNode<E> * parent, const TreeSetNode<E> * left, const TreeSetNode<E> * right) {
 			this->value = value;
 			this->parent = parent;
 			this->left = left;
@@ -102,53 +102,23 @@ bool TreeSet<E>::remove(const E& value) {
 	TreeSetNode<E> * parent;
 	if (contains(value, parent)) {
 		TreeSetNode<E> * temp;
-		if (parent == NULL) {
-			if (root->left != NULL && root->right != NULL) {
-				TreeSetNode<E> * less = getLess(root->right);
-				E value2 = less->value;
-				remove(value2);
-				root->value = value2;
-			} else if (root->left != NULL) {
-				temp = root;
-				root = root->left;
-				root->parent = NULL;
-				delete temp;
-			} else {
-				temp = root;
-				root = root->right;
-				if (root != NULL)
-					root->parent = NULL;
-				delete temp;
-			}
+		TreeSetNode<E> *& node = (parent == NULL) ? root : ((parent->value > value) ? parent->left : parent->right);
+		if (node->left != NULL && node->right != NULL) {
+			TreeSetNode<E> * less = getLess(node->right);
+			E value2 = less->value;
+			remove(value2);
+			node->value = value2;
+		} else if (node->left != NULL) {
+			temp = node;
+			node = node->left;
+			node->parent = parent;
+			delete temp;
 		} else {
-			TreeSetNode<E> *& node = (parent->value > value) ? parent->left : parent->right;
-			if (node->left != NULL && node->right != NULL) {
-				TreeSetNode<E> * less = getLess(node->right);
-				E value2 = less->value;
-				remove(value2);
-				node->value = value2;
-			} else if (node->left != NULL) {
-				temp = node;
-				if (parent->value < value) {
-					parent->right = node->left;
-				} else {
-					parent->left = node->left;
-				}
-				//node = node->left;
+			temp = node;
+			node = node->right;
+			if (node != NULL)
 				node->parent = parent;
-				delete temp;
-			} else {
-				temp = node;
-				if (parent->value < value) {
-					parent->right = node->right;
-				} else {
-					parent->left = node->right;
-				}
-				//node = node->right;
-				if (node != NULL)
-					node->parent = parent;
-				delete temp;
-			}
+			delete temp;
 		}
 		this->numNodes--;
 		return true;

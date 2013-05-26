@@ -4,7 +4,7 @@
 #include <iostream>
 
 class StringData {
-	public:
+	private:
 		friend class String;
 		int refCount;
 		int len;
@@ -61,7 +61,7 @@ class StringData {
 };
 
 class String {
-	public:
+	private:
 		StringData * data;
 
 		String(StringData * data) {
@@ -77,7 +77,7 @@ class String {
 		int length() const;
 		int compare(const String&) const;
 		int compare(const char*) const;
-		String& operator =(const String);
+		String& operator =(const String&);
 		String& operator =(const char *);
 		bool operator ==(const String&) const;
 		bool operator ==(const char*) const;
@@ -85,14 +85,14 @@ class String {
 		String& operator +(const char*) const;
 		String& operator +=(const String&);
 		String& operator +=(const char*);
-		bool operator <(const String&);
-		bool operator <(const char*);
-		bool operator >(const String&);
-		bool operator >(const char*);
+		bool operator <(const String&)const;
+		bool operator <(const char*)const;
+		bool operator >(const String&)const;
+		bool operator >(const char*)const;
 		String& toLower();
 		String& toUpper();
 		char operator [ ](int) const;
-		char& operator [ ](int);
+		char operator [ ](int);
 		void print() const;
 		char * const toChar() const;
 };

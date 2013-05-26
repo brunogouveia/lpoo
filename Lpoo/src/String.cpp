@@ -18,12 +18,12 @@ String::String(const char * string) {
 }
 
 String::String(const String& string) {
-
+	/*O construtor de cópia só referencia a mesma string*/
 	data = string.data;
 	string.data->refCount++;
 }
 String::~String() {
-	if (data == NULL) {
+	if (data != NULL) {
 		this->data->refCount--;
 		if (this->data->refCount == 0)
 			delete data;
@@ -77,7 +77,7 @@ int String::compare(const char * string) const {
 
 }
 
-String& String::operator=(const String string) {
+String& String::operator=(const String& string) {
 	if (data != NULL) {
 		data->refCount--;
 		if (this->data->refCount == 0)
@@ -138,15 +138,19 @@ String& String::operator+(const String& string) const {
 	int i;
 	StringData * data = new (string.length() + length()) StringData();
 	String * nString = new String(data);
+	char * dataBuffer = data->buffer();
 	data->len = length() + string.length();
+	/*O numero de referencias fica em 0, porque esse novo objeto será
+	 * recebido por alguem, e o operador de atribuição incrementará
+	 * o número de referencias ficando em 1.*/
 	data->refCount = 0;
 
 	for (i = 0; i < length(); i++)
-		(*nString)[i] = (*this)[i];
+		dataBuffer[i] = (*this)[i];
 
 	for (; i < (length() + string.length()); i++)
-		(*nString)[i] = string[i - length()];
-	(*nString)[i] = '\0';
+		dataBuffer[i] = string[i - length()];
+	dataBuffer[i] = '\0';
 
 	return *nString;
 
@@ -162,15 +166,19 @@ String& String::operator+(const char* string) const {
 	int i;
 	StringData * data = new (stringLen + length()) StringData();
 	String * nString = new String(data);
+	char * dataBuffer = data->buffer();
 	data->len = length() + stringLen;
+	/*O numero de referencias fica em 0, porque esse novo objeto será
+	 * recebido por alguem, e o operador de atribuição incrementará
+	 * o número de referencias ficando em 1.*/
 	data->refCount = 0;
 
 	for (i = 0; i < length(); i++)
-		(*nString)[i] = (*this)[i];
+		dataBuffer[i] = (*this)[i];
 
 	for (; i < stringLen + length(); i++)
-		(*nString)[i] = string[i - length()];
-	(*nString)[i] = '\0';
+		dataBuffer[i] = string[i - length()];
+	dataBuffer[i] = '\0';
 
 	return *nString;
 
@@ -185,34 +193,34 @@ String& String::operator+=(const char* string) {
 	return *this;
 }
 
-bool String::operator <(const String& string) {
+bool String::operator <(const String& string) const {
 	return compare(string) < 0;
 }
-bool String::operator <(const char * string) {
+bool String::operator <(const char * string) const {
 	return compare(string) < 0;
 }
 
-bool String::operator >(const String& string) {
+bool String::operator >(const String& string) const {
 	return compare(string) > 0;
 }
-bool String::operator >(const char * string) {
+bool String::operator >(const char * string) const {
 	return compare(string) > 0;
 }
 
 String& String::toLower() {
 	for (int i = 0; i < length(); i++)
-		(*this)[i] = tolower((*this)[i]);
+		(this->data->buffer())[i] = tolower((*this)[i]);
 	return *this;
 }
 String& String::toUpper() {
 	for (int i = 0; i < length(); i++)
-		(*this)[i] = toupper((*this)[i]);
+		(this->data->buffer())[i] = toupper((*this)[i]);
 	return *this;
 }
 char String::operator[](int i) const {
 	return *(data->buffer() + i);
 }
-char& String::operator[](int i) {
+char String::operator[](int i) {
 	return *(data->buffer() + i);
 }
 

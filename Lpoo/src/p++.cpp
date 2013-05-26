@@ -37,7 +37,7 @@ int main() {
 		printf("%d ", iteratorArray->next());
 	printf("\n");
 
-	printf("\Teste com remoção:\n");
+	printf("\nTeste com remoção:\n");
 	srand(time(NULL));
 	for (int i = 0; i < 15; i++) {
 		int r = rand() % 50;
